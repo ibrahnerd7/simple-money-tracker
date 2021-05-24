@@ -1,3 +1,4 @@
+import { inject } from '@loopback/context';
 import {
   Count,
   CountSchema,
@@ -14,6 +15,8 @@ import {
   patch,
   post,
   requestBody,
+  RestBindings,
+  Response,
 } from '@loopback/rest';
 import {
   User,
@@ -24,6 +27,7 @@ import {UserRepository} from '../repositories';
 export class UserWalletController {
   constructor(
     @repository(UserRepository) protected userRepository: UserRepository,
+    @inject(RestBindings.Http.RESPONSE) private response: Response
   ) { }
 
   @get('/users/{id}/wallets', {
@@ -41,8 +45,14 @@ export class UserWalletController {
   async find(
     @param.path.number('id') id: number,
     @param.query.object('filter') filter?: Filter<Wallet>,
-  ): Promise<Wallet[]> {
-    return this.userRepository.wallets(id).find(filter);
+  ): Promise<Response> {
+    const wallets:Wallet[]=await this.userRepository.wallets(id).find(filter);
+    const totalBalance=wallets.map(wallet=>wallet.balance).reduce((prev,next )=>prev! + next!);
+    this.response.status(200).send({
+        wallets,
+        totalBalance
+    })
+    return this.response;
   }
 
   @post('/users/{id}/wallets', {
