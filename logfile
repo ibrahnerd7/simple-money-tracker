@@ -6,3 +6,4 @@
 2021-05-24 19:32:50.302 EAT [2952] WARNING:  could not create listen socket for "localhost"
 2021-05-24 19:32:50.302 EAT [2952] FATAL:  could not create any TCP/IP sockets
 2021-05-24 19:32:50.303 EAT [2952] LOG:  database system is shut down
+x

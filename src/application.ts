@@ -7,6 +7,7 @@ import {
 import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
+import {format, LoggingBindings, LoggingComponent, WinstonLoggerOptions} from'@loopback/logging';
 import path from 'path';
 import {MySequence} from './sequence';
 
@@ -29,6 +30,18 @@ export class SimpleMoneyTrackerApplication extends BootMixin(
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
+
+    //Customize @loopback/logger configuration here
+    this.configure(LoggingBindings.COMPONENT).to({
+      enableFluent: false,
+      enableHttpAccessLog: true,
+    });
+    this.configure<WinstonLoggerOptions>(LoggingBindings.WINSTON_LOGGER).to({
+      level: 'info',
+      format: format.json(),
+      defaultMeta: {framework: 'LoopBack'},
+    });
+    this.component(LoggingComponent);
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here

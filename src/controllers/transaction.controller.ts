@@ -1,3 +1,5 @@
+import { inject } from '@loopback/context';
+import { LoggingBindings, WinstonLogger } from '@loopback/logging';
 import {
   Count,
   CountSchema,
@@ -16,15 +18,21 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
-import {Transaction} from '../models';
-import {TransactionRepository} from '../repositories';
+import {Transaction, Wallet} from '../models';
+import {TransactionRepository, WalletRepository} from '../repositories';
 
 export class TransactionController {
   constructor(
     @repository(TransactionRepository)
     public transactionRepository : TransactionRepository,
+    @inject(LoggingBindings.WINSTON_LOGGER)
+    private logger: WinstonLogger,
+    @repository(WalletRepository)
+    public walletRepository:WalletRepository
   ) {}
+ 
 
   @post('/transactions')
   @response(200, {
@@ -43,8 +51,29 @@ export class TransactionController {
       },
     })
     transaction: Omit<Transaction, 'id'>,
-  ): Promise<Transaction> {
-    return this.transactionRepository.create(transaction);
+  ): Promise<Transaction | undefined>  {
+    const wallet:Wallet=await this.walletRepository.findById(transaction.walletId);
+
+    const currentBalance= wallet.balance || 0;
+    const transactionAmount=transaction.amount;
+    let canDeduct=currentBalance-transactionAmount >= 0;
+
+    if(transaction.is_expense && canDeduct)return this.updateBalance(true,currentBalance,transactionAmount,transaction,transaction.walletId);
+
+    else if(transaction.is_expense && !canDeduct)throw new HttpErrors.BadRequest('You can\'t spending more than you have in your wallet.');
+
+    else return this.updateBalance(false,currentBalance,transactionAmount,transaction,transaction.walletId);
+  }
+
+  
+  async updateBalance(
+    isExpense:boolean,currentBalance:number,
+    transactionAmount:number, transaction:Transaction,
+     walletId:number|0):Promise<Transaction | undefined>{
+    const finalBalance=isExpense? currentBalance  - transactionAmount : currentBalance  + transactionAmount;
+    const response=  this.transactionRepository.create(transaction);
+    await this.walletRepository.updateById(walletId,{balance:finalBalance});
+    return response;
   }
 
   @get('/transactions/count')
