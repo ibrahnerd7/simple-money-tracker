@@ -1,5 +1,6 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {Wallet} from './wallet.model';
+import {Category} from './category.model';
 
 @model()
 export class Transaction extends Entity {
@@ -41,6 +42,9 @@ export class Transaction extends Entity {
 
   @belongsTo(() => Wallet)
   walletId: number;
+
+  @belongsTo(() => Category)
+  categoryId: number;
 
   constructor(data?: Partial<Transaction>) {
     super(data);
