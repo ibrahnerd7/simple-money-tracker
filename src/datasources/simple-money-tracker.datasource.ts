@@ -5,10 +5,10 @@ const config = {
   name: 'SimpleMoneyTracker',
   connector: 'postgresql',
   url: '',
-  host: 'localhost',
-  port: 5432,
-  user: 'postgres',
-  password: 'password',
+  host: 'app-3bc52a7b-731a-44ff-b94f-29ad936ee622-do-user-4431621-0.b.db.ondigitalocean.com',
+  port: 25060,
+  user: 'simple-money-tracker',
+  password: 'ok927eemg19z5ky5',
   database: 'simple-money-tracker'
 };
 
