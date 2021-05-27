@@ -5,11 +5,13 @@ const config = {
   name: 'SimpleMoneyTracker',
   connector: 'postgresql',
   url: '',
-  host: 'app-3bc52a7b-731a-44ff-b94f-29ad936ee622-do-user-4431621-0.b.db.ondigitalocean.com',
-  port: 25060,
-  user: 'simple-money-tracker',
-  password: 'ok927eemg19z5ky5',
-  database: 'simple-money-tracker'
+  host: 'localhost',
+  port: 5432,
+  debug:true,
+  user: 'money_tracker_user',
+  password: 'password',
+  database: 'money_tracker',
+  sslmode  : require
 };
 
 // Observe application's life cycle to disconnect the datasource when
