@@ -27,8 +27,6 @@ export class TransactionController {
   constructor(
     @repository(TransactionRepository)
     public transactionRepository : TransactionRepository,
-    @inject(LoggingBindings.WINSTON_LOGGER)
-    private logger: WinstonLogger,
     @repository(WalletRepository)
     public walletRepository:WalletRepository
   ) {}
@@ -45,7 +43,7 @@ export class TransactionController {
         'application/json': {
           schema: getModelSchemaRef(Transaction, {
             title: 'NewTransaction',
-            exclude: ['id'],
+            exclude: ['id','created_at'],
           }),
         },
       },
@@ -65,7 +63,6 @@ export class TransactionController {
     else return this.updateBalance(false,currentBalance,transactionAmount,transaction,transaction.walletId);
   }
 
-  
   async updateBalance(
     isExpense:boolean,currentBalance:number,
     transactionAmount:number, transaction:Transaction,
@@ -76,17 +73,6 @@ export class TransactionController {
     return response;
   }
 
-  @get('/transactions/count')
-  @response(200, {
-    description: 'Transaction model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Transaction) where?: Where<Transaction>,
-  ): Promise<Count> {
-    return this.transactionRepository.count(where);
-  }
-
   @get('/transactions')
   @response(200, {
     description: 'Array of Transaction model instances',
@@ -94,34 +80,14 @@ export class TransactionController {
       'application/json': {
         schema: {
           type: 'array',
-          items: getModelSchemaRef(Transaction, {includeRelations: true}),
+          items: getModelSchemaRef(Transaction),
         },
       },
     },
   })
   async find(
-    @param.filter(Transaction) filter?: Filter<Transaction>,
   ): Promise<Transaction[]> {
-    return this.transactionRepository.find(filter);
-  }
-
-  @patch('/transactions')
-  @response(200, {
-    description: 'Transaction PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Transaction, {partial: true}),
-        },
-      },
-    })
-    transaction: Transaction,
-    @param.where(Transaction) where?: Where<Transaction>,
-  ): Promise<Count> {
-    return this.transactionRepository.updateAll(transaction, where);
+    return this.transactionRepository.find();
   }
 
   @get('/transactions/{id}')
@@ -129,27 +95,24 @@ export class TransactionController {
     description: 'Transaction model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Transaction, {includeRelations: true}),
+        schema: getModelSchemaRef(Transaction),
       },
     },
   })
-  async findById(
-    @param.path.number('id') id: string,
-    @param.filter(Transaction, {exclude: 'where'}) filter?: FilterExcludingWhere<Transaction>
-  ): Promise<Transaction> {
-    return this.transactionRepository.findById(id, filter);
+  async findById(@param.path.string('id') id: string): Promise<Transaction> {
+    return this.transactionRepository.findById(id);
   }
 
   @patch('/transactions/{id}')
-  @response(204, {
+  @response(200, {
     description: 'Transaction PATCH success',
   })
   async updateById(
-    @param.path.number('id') id: string,
+    @param.path.string('id') id: string,
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Transaction, {partial: true}),
+          schema: getModelSchemaRef(Transaction, {partial: true, exclude: ['id','walletId','categoryId'],}),
         },
       },
     })
@@ -158,22 +121,29 @@ export class TransactionController {
     await this.transactionRepository.updateById(id, transaction);
   }
 
-  @put('/transactions/{id}')
-  @response(204, {
-    description: 'Transaction PUT success',
+  @get('/transactions/{id}/wallet', {
+    responses: {
+      '200': {
+        description: 'Wallet belonging to Transaction',
+        content: {
+          'application/json': {
+            schema: {type: 'array', items: getModelSchemaRef(Wallet)},
+          },
+        },
+      },
+    },
   })
-  async replaceById(
-    @param.path.number('id') id: string,
-    @requestBody() transaction: Transaction,
-  ): Promise<void> {
-    await this.transactionRepository.replaceById(id, transaction);
+  async getWallet(
+    @param.path.number('id') id: typeof Transaction.prototype.id,
+  ): Promise<Wallet> {
+    return this.transactionRepository.wallet(id);
   }
 
   @del('/transactions/{id}')
-  @response(204, {
+  @response(200, {
     description: 'Transaction DELETE success',
   })
-  async deleteById(@param.path.number('id') id: string): Promise<void> {
+  async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.transactionRepository.deleteById(id);
   }
 }
