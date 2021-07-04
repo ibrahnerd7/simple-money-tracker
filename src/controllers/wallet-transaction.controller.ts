@@ -39,7 +39,7 @@ export class WalletTransactionController {
     },
   })
   async find(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @param.query.object('filter') filter?: Filter<Transaction>,
   ): Promise<Transaction[]> {
     return this.walletRepository.transactions(id).find(filter);
@@ -79,7 +79,7 @@ export class WalletTransactionController {
     },
   })
   async patch(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @requestBody({
       content: {
         'application/json': {
@@ -102,7 +102,7 @@ export class WalletTransactionController {
     },
   })
   async delete(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @param.query.object('where', getWhereSchemaFor(Transaction)) where?: Where<Transaction>,
   ): Promise<Count> {
     return this.walletRepository.transactions(id).delete(where);

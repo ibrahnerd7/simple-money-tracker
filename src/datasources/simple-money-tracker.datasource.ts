@@ -3,15 +3,14 @@ import {juggler} from '@loopback/repository';
 
 const config = {
   name: 'SimpleMoneyTracker',
-  connector: 'postgresql',
-  url: '',
-  host: 'localhost',
-  port: 5432,
+  connector: 'mongodb',
+  url: 'mongodb+srv://ibrahim:RahvMhAGHr88Q8WF@money-tracker.jmach.mongodb.net/money-tracker?retryWrites=true&w=majority',
+  host: '',
+  // port: 27017,
   debug:true,
-  user: 'money_tracker_user',
-  password: 'password',
+  user: '',
+  password: '',
   database: 'money_tracker',
-  sslmode  : require
 };
 
 // Observe application's life cycle to disconnect the datasource when

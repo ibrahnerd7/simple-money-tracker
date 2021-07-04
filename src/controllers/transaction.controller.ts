@@ -50,7 +50,7 @@ export class TransactionController {
         },
       },
     })
-    transaction: Omit<Transaction, 'id'>,
+    transaction: Omit<Transaction,'id'>,
   ): Promise<Transaction | undefined>  {
     const wallet:Wallet=await this.walletRepository.findById(transaction.walletId);
 
@@ -69,7 +69,7 @@ export class TransactionController {
   async updateBalance(
     isExpense:boolean,currentBalance:number,
     transactionAmount:number, transaction:Transaction,
-     walletId:number|0):Promise<Transaction | undefined>{
+     walletId:string):Promise<Transaction | undefined>{
     const finalBalance=isExpense? currentBalance  - transactionAmount : currentBalance  + transactionAmount;
     const response=  this.transactionRepository.create(transaction);
     await this.walletRepository.updateById(walletId,{balance:finalBalance});
@@ -134,7 +134,7 @@ export class TransactionController {
     },
   })
   async findById(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @param.filter(Transaction, {exclude: 'where'}) filter?: FilterExcludingWhere<Transaction>
   ): Promise<Transaction> {
     return this.transactionRepository.findById(id, filter);
@@ -145,7 +145,7 @@ export class TransactionController {
     description: 'Transaction PATCH success',
   })
   async updateById(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @requestBody({
       content: {
         'application/json': {
@@ -163,7 +163,7 @@ export class TransactionController {
     description: 'Transaction PUT success',
   })
   async replaceById(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @requestBody() transaction: Transaction,
   ): Promise<void> {
     await this.transactionRepository.replaceById(id, transaction);
@@ -173,7 +173,7 @@ export class TransactionController {
   @response(204, {
     description: 'Transaction DELETE success',
   })
-  async deleteById(@param.path.number('id') id: number): Promise<void> {
+  async deleteById(@param.path.number('id') id: string): Promise<void> {
     await this.transactionRepository.deleteById(id);
   }
 }

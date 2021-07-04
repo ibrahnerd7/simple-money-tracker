@@ -5,11 +5,11 @@ import {Category} from './category.model';
 @model()
 export class Transaction extends Entity {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
     generated: true,
   })
-  id?: number;
+  id?: string;
 
   @property({
     type: 'string',
@@ -41,10 +41,10 @@ export class Transaction extends Entity {
   is_expense: boolean;
 
   @belongsTo(() => Wallet)
-  walletId: number;
+  walletId: string;
 
   @belongsTo(() => Category)
-  categoryId: number;
+  categoryId: string;
 
   constructor(data?: Partial<Transaction>) {
     super(data);

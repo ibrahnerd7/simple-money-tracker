@@ -105,7 +105,7 @@ export class WalletController {
     },
   })
   async findById(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @param.filter(Wallet, {exclude: 'where'}) filter?: FilterExcludingWhere<Wallet>
   ): Promise<Wallet> {
     return this.walletRepository.findById(id, filter);
@@ -116,7 +116,7 @@ export class WalletController {
     description: 'Wallet PATCH success',
   })
   async updateById(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @requestBody({
       content: {
         'application/json': {
@@ -134,7 +134,7 @@ export class WalletController {
     description: 'Wallet PUT success',
   })
   async replaceById(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @requestBody() wallet: Wallet,
   ): Promise<void> {
     await this.walletRepository.replaceById(id, wallet);
@@ -144,7 +144,7 @@ export class WalletController {
   @response(204, {
     description: 'Wallet DELETE success',
   })
-  async deleteById(@param.path.number('id') id: number): Promise<void> {
+  async deleteById(@param.path.number('id') id: string): Promise<void> {
     await this.walletRepository.deleteById(id);
   }
 }

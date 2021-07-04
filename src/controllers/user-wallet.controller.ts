@@ -43,7 +43,7 @@ export class UserWalletController {
     },
   })
   async find(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @param.query.object('filter') filter?: Filter<Wallet>,
   ): Promise<Response> {
     const wallets:Wallet[]=await this.userRepository.wallets(id).find(filter);
@@ -89,7 +89,7 @@ export class UserWalletController {
     },
   })
   async patch(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @requestBody({
       content: {
         'application/json': {
@@ -112,7 +112,7 @@ export class UserWalletController {
     },
   })
   async delete(
-    @param.path.number('id') id: number,
+    @param.path.number('id') id: string,
     @param.query.object('where', getWhereSchemaFor(Wallet)) where?: Where<Wallet>,
   ): Promise<Count> {
     return this.userRepository.wallets(id).delete(where);

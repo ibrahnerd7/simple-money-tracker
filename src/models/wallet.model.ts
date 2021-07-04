@@ -5,11 +5,11 @@ import {Transaction} from './transaction.model';
 @model()
 export class Wallet extends Entity {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
     generated: true,
   })
-  id?: number;
+  id?: string;
 
   @property({
     type: 'string',
@@ -29,7 +29,7 @@ export class Wallet extends Entity {
   balance?: number;
 
   @belongsTo(() => User)
-  userId: number;
+  userId: string;
 
   @hasMany(() => Transaction)
   transactions: Transaction[];
