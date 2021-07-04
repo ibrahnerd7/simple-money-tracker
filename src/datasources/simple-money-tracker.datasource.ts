@@ -4,10 +4,9 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'SimpleMoneyTracker',
   connector: 'mongodb',
-  url: 'mongodb+srv://ibrahim:RahvMhAGHr88Q8WF@money-tracker.jmach.mongodb.net/money-tracker?retryWrites=true&w=majority',
+  url: '',
   host: '',
-  // port: 27017,
-  debug:true,
+  debug:false,
   user: '',
   password: '',
   database: 'money_tracker',
