@@ -11,6 +11,19 @@ Whenever dependencies in `package.json` are changed, run the following command:
 ```sh
 yarn install
 ```
+## Update database configs
+
+Replace the config.url in
+
+```sh
+ src/datasources/simple-money-tracker.datasource.ts
+```
+with your credentials in the format
+
+```sh
+ mongodb+srv://<username>:<password>@money-tracker.jmach.mongodb.net/<dbname>?retryWrites=true&w=majority
+```
+
 
 ## Run the application
 
